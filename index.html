@@ -110,6 +110,12 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
 .icon-btn:hover{border-color:var(--orange);color:var(--orange);}
 .icon-btn.icon-danger:hover{border-color:var(--red);color:var(--red);}
 .icon-btn.icon-save:hover{border-color:var(--green);color:var(--green);}
+.brinde-extra{grid-column:1 / -1;display:flex;gap:14px;flex-wrap:wrap;padding-top:10px;margin-top:4px;border-top:1px dashed var(--border);}
+.brinde-extra .lote-field{flex:1;min-width:150px;}
+.toggle-stamp{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1.5px solid currentColor;border-radius:5px;text-align:center;cursor:pointer;background:none;display:inline-block;transition:transform .15s ease;}
+.toggle-stamp:hover{transform:scale(1.03);}
+.toggle-yes{color:var(--green);}
+.toggle-no{color:var(--text-soft);}
 
 .footer-note{text-align:center;font-size:12px;color:var(--text-mute);margin-top:36px;}
 
@@ -218,6 +224,7 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
     <div class="section-title" style="margin:0;">Lotes do evento</div>
     <div class="lotes-head-right">
       <button class="btn-add-lote" id="add-lote-btn">+ Novo lote</button>
+      <button class="btn-add-lote" id="add-brinde-btn" style="border-color:var(--green);color:var(--green);">+ Novo brinde</button>
       <div class="save-indicator" id="save-indicator">carregando…</div>
     </div>
   </div>
@@ -257,6 +264,32 @@ let activeStatusChip = 'todos';
 let searchQuery = '';
 let editingIdx = null;
 
+function toNumberBR(v){
+  if(v === '' || v === null || v === undefined) return 0;
+  if(typeof v === 'number') return isNaN(v) ? 0 : v;
+  let s = String(v).trim();
+  if(s === '') return 0;
+  s = s.replace(/R\$\s?/i,'').replace(/\s/g,'');
+  if(s.includes(',') && s.includes('.')){
+    s = s.replace(/\./g,'').replace(',', '.');
+  } else if(s.includes(',')){
+    s = s.replace(',', '.');
+  }
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+function formatBRLDisplay(v){
+  const n = toNumberBR(v);
+  if(!n) return '';
+  return n.toLocaleString('pt-BR', {style:'currency', currency:'BRL', minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function isCommitted(l){
+  if(l.tipo === 'brinde') return !!l.fechado;
+  return l.status === 'arrematado' || l.status === 'pago';
+}
+
 function fmtMoney(n){
   return 'R$ ' + (n||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
@@ -274,15 +307,16 @@ function updateCountdowns(){
 function computeStats(){
   let orcado = 0, comprometido = 0, fechados = 0;
   lotes.forEach(l => {
-    orcado += parseFloat(l.orcado) || 0;
-    if(l.status === 'arrematado' || l.status === 'pago'){
-      comprometido += parseFloat(l.real) || parseFloat(l.orcado) || 0;
+    orcado += toNumberBR(l.orcado);
+    if(isCommitted(l)){
+      comprometido += toNumberBR(l.real) || toNumberBR(l.orcado);
       fechados++;
     }
   });
   document.getElementById('st-orcado').textContent = fmtMoney(orcado);
   document.getElementById('st-orcado-sub').textContent = lotes.length + ' lotes no total';
   document.getElementById('st-comprometido').textContent = fmtMoney(comprometido);
+  document.getElementById('st-comprometido-sub').textContent = 'arrematado, pago ou brinde fechado';
   document.getElementById('st-saldo').textContent = fmtMoney(orcado - comprometido);
   document.getElementById('st-progresso').textContent = fechados + ' / ' + lotes.length;
   document.getElementById('st-progress-fill').style.width = (lotes.length ? (fechados / lotes.length * 100) : 0) + '%';
@@ -291,8 +325,8 @@ function computeStats(){
 }
 
 function renderAlert(){
-  const semOrcamento = lotes.filter(l => !parseFloat(l.orcado)).length;
-  const estourados = lotes.filter(l => parseFloat(l.real) > parseFloat(l.orcado) && parseFloat(l.orcado) > 0).length;
+  const semOrcamento = lotes.filter(l => !toNumberBR(l.orcado)).length;
+  const estourados = lotes.filter(l => toNumberBR(l.real) > toNumberBR(l.orcado) && toNumberBR(l.orcado) > 0).length;
   const bar = document.getElementById('alert-bar');
   const parts = [];
   if(semOrcamento) parts.push(semOrcamento + ' lote(s) ainda sem valor orçado definido');
@@ -309,9 +343,9 @@ function renderCatTable(){
   const cats = {};
   lotes.forEach(l => {
     if(!cats[l.cat]) cats[l.cat] = {orcado:0, comprometido:0};
-    cats[l.cat].orcado += parseFloat(l.orcado) || 0;
-    if(l.status === 'arrematado' || l.status === 'pago'){
-      cats[l.cat].comprometido += parseFloat(l.real) || parseFloat(l.orcado) || 0;
+    cats[l.cat].orcado += toNumberBR(l.orcado);
+    if(isCommitted(l)){
+      cats[l.cat].comprometido += toNumberBR(l.real) || toNumberBR(l.orcado);
     }
   });
   const totalComprometido = Object.values(cats).reduce((s,c) => s + c.comprometido, 0);
@@ -335,10 +369,11 @@ function renderCatTable(){
 }
 
 function matchesFilters(l){
-  if(activeKpiFilter === 'comprometido' && !(l.status === 'arrematado' || l.status === 'pago')) return false;
-  if(activeKpiFilter === 'pendente' && (l.status === 'arrematado' || l.status === 'pago')) return false;
-  if(activeKpiFilter === 'arrematado' && l.status !== 'arrematado' && l.status !== 'pago') return false;
-  if(activeStatusChip !== 'todos' && l.status !== activeStatusChip) return false;
+  const committed = isCommitted(l);
+  if(activeKpiFilter === 'comprometido' && !committed) return false;
+  if(activeKpiFilter === 'pendente' && committed) return false;
+  if(activeKpiFilter === 'arrematado' && !committed) return false;
+  if(activeStatusChip !== 'todos' && l.tipo !== 'brinde' && l.status !== activeStatusChip) return false;
   if(searchQuery){
     const q = searchQuery.toLowerCase();
     const hay = (l.item + ' ' + l.cat + ' ' + (l.fornecedor||'')).toLowerCase();
@@ -353,6 +388,8 @@ function renderLotes(){
   lotes.forEach((lote, idx) => {
     if(!matchesFilters(lote)) return;
     const isEditing = editingIdx === idx;
+    const isBrinde = lote.tipo === 'brinde';
+    const committed = isCommitted(lote);
     const div = document.createElement('div');
     div.className = 'lote';
     div.innerHTML = `
@@ -362,7 +399,7 @@ function renderLotes(){
           <input type="text" class="edit-cat-input" data-editfield="cat" data-idx="${idx}" value="${lote.cat.replace(/"/g,'&quot;')}" placeholder="Categoria">
           <input type="text" class="edit-item-input" data-editfield="item" data-idx="${idx}" value="${lote.item.replace(/"/g,'&quot;')}" placeholder="Nome do item">
         ` : `
-          <div class="lote-cat">${lote.cat}</div>
+          <div class="lote-cat">${lote.cat}${isBrinde ? ' · Brinde' : ''}</div>
           <div class="lote-item-name">${lote.item}</div>
         `}
         <label>Observações</label>
@@ -374,14 +411,16 @@ function renderLotes(){
       </div>
       <div class="lote-field">
         <label>Valor orçado</label>
-        <input type="number" step="0.01" data-field="orcado" data-idx="${idx}" value="${lote.orcado || ''}" placeholder="0,00">
+        <input type="text" inputmode="decimal" class="money-field" data-field="orcado" data-idx="${idx}" value="${lote.orcado ? formatBRLDisplay(lote.orcado) : ''}" placeholder="R$ 0,00">
       </div>
       <div class="lote-field">
         <label>Valor real</label>
-        <input type="number" step="0.01" data-field="real" data-idx="${idx}" value="${lote.real || ''}" placeholder="0,00">
+        <input type="text" inputmode="decimal" class="money-field" data-field="real" data-idx="${idx}" value="${lote.real ? formatBRLDisplay(lote.real) : ''}" placeholder="R$ 0,00">
       </div>
       <div class="lote-actions">
-        <button class="status-stamp status-${lote.status}" data-idx="${idx}">${STATUS_LABEL[lote.status]}</button>
+        ${isBrinde
+          ? `<div class="status-stamp ${committed ? 'status-pago' : 'status-aberto'}" style="cursor:default;">${committed ? 'Fechado' : 'Em aberto'}</div>`
+          : `<button class="status-stamp status-${lote.status}" data-idx="${idx}">${STATUS_LABEL[lote.status]}</button>`}
         <div class="lote-icons">
           ${isEditing ? `
             <button class="icon-btn icon-save" data-action="save" data-idx="${idx}" title="Salvar">✓</button>
@@ -392,6 +431,21 @@ function renderLotes(){
           `}
         </div>
       </div>
+      ${isBrinde ? `
+      <div class="brinde-extra">
+        <div class="lote-field">
+          <label>Comprado</label>
+          <button class="toggle-stamp ${lote.comprado ? 'toggle-yes' : 'toggle-no'}" data-toggle="comprado" data-idx="${idx}">${lote.comprado ? 'Sim' : 'Não'}</button>
+        </div>
+        <div class="lote-field">
+          <label>Fechado</label>
+          <button class="toggle-stamp ${lote.fechado ? 'toggle-yes' : 'toggle-no'}" data-toggle="fechado" data-idx="${idx}">${lote.fechado ? 'Sim' : 'Não'}</button>
+        </div>
+        <div class="lote-field">
+          <label>Previsão de chegada</label>
+          <input type="date" data-field="previsao" data-idx="${idx}" value="${lote.previsao || ''}">
+        </div>
+      </div>` : ''}
     `;
     container.appendChild(div);
   });
@@ -406,12 +460,41 @@ function renderLotes(){
     });
   });
 
-  container.querySelectorAll('.status-stamp').forEach(btn => {
+  container.querySelectorAll('.money-field').forEach(el => {
+    el.addEventListener('focus', e => {
+      const idx = +e.target.dataset.idx;
+      const field = e.target.dataset.field;
+      const n = toNumberBR(lotes[idx][field]);
+      e.target.value = n ? String(n).replace('.', ',') : '';
+    });
+    el.addEventListener('blur', e => {
+      const idx = +e.target.dataset.idx;
+      const field = e.target.dataset.field;
+      const n = toNumberBR(e.target.value);
+      lotes[idx][field] = n;
+      e.target.value = n ? formatBRLDisplay(n) : '';
+      computeStats();
+      scheduleSave();
+    });
+  });
+
+  container.querySelectorAll('.status-stamp[data-idx]').forEach(btn => {
     btn.addEventListener('click', e => {
       const idx = +e.target.dataset.idx;
       const cur = STATUS_FLOW.indexOf(lotes[idx].status);
       const next = STATUS_FLOW[(cur + 1) % STATUS_FLOW.length];
       lotes[idx].status = next;
+      computeStats();
+      renderLotes();
+      scheduleSave();
+    });
+  });
+
+  container.querySelectorAll('.toggle-stamp[data-toggle]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = +e.target.dataset.idx;
+      const field = e.target.dataset.toggle;
+      lotes[idx][field] = !lotes[idx][field];
       computeStats();
       renderLotes();
       scheduleSave();
@@ -521,6 +604,24 @@ document.getElementById('add-lote-btn').addEventListener('click', () => {
   scheduleSave();
   const container = document.getElementById('lotes-container');
   container.lastElementChild && container.lastElementChild.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+document.getElementById('add-brinde-btn').addEventListener('click', () => {
+  lotes.push({cat:'Brindes', item:'Novo brinde', fornecedor:'', orcado:'', real:'', status:'aberto', obs:'', tipo:'brinde', comprado:false, fechado:false, previsao:''});
+  editingIdx = lotes.length - 1;
+  activeKpiFilter = 'all';
+  activeStatusChip = 'todos';
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+  document.querySelector('.kpi-card[data-filter="all"]').classList.add('active');
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.chip[data-status="todos"]').classList.add('active');
+  renderLotes();
+  computeStats();
+  scheduleSave();
+  const container2 = document.getElementById('lotes-container');
+  container2.lastElementChild && container2.lastElementChild.scrollIntoView({behavior:'smooth', block:'center'});
 });
 
 async function loadMe(){
