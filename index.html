@@ -7,276 +7,311 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --cream:#FBF6EE;
-    --paper:#FFFFFF;
-    --navy:#161C2E;
-    --navy-soft:#3A4260;
-    --orange:#FF7F3F;
-    --orange-deep:#E0611A;
-    --line:#E4DACB;
-    --green:#3E7A5E;
-    --amber:#B8842B;
-    --red-muted:#A34A3B;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--cream);
-    color:var(--navy);
-    font-family:'Inter',sans-serif;
-    padding:32px 20px 80px;
-  }
-  .wrap{max-width:980px;margin:0 auto;}
+:root{
+--cream:#FBF6EE;
+--paper:#FFFFFF;
+--navy:#161C2E;
+--navy-soft:#3A4260;
+--orange:#FF7F3F;
+--orange-deep:#E0611A;
+--line:#E4DACB;
+--green:#3E7A5E;
+--amber:#B8842B;
+--red-muted:#A34A3B;
+}
+*{box-sizing:border-box;}
+body{
+margin:0;
+background:var(--cream);
+color:var(--navy);
+font-family:'Inter',sans-serif;
+padding:32px 20px 80px;
+}
+.wrap{max-width:980px;margin:0 auto;}
 
-  /* HEADER — edital / documento oficial */
-  .edital-head{
-    background:var(--navy);
-    color:var(--cream);
-    padding:36px 40px;
-    position:relative;
-    overflow:hidden;
-  }
-  .edital-head::before{
-    content:"";
-    position:absolute; inset:8px;
-    border:1px solid rgba(251,246,238,0.25);
-    pointer-events:none;
-  }
-  .edital-eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--orange);
-    margin-bottom:10px;
-  }
-  .edital-title{
-    font-family:'Fraunces',serif;
-    font-weight:700;
-    font-size:clamp(28px,4vw,42px);
-    line-height:1.1;
-    margin:0 0 8px;
-  }
-  .edital-sub{
-    font-size:15px;
-    color:#C7CBDB;
-    margin:0;
-  }
-  .countdowns{
-    display:flex;
-    gap:1px;
-    background:rgba(251,246,238,0.2);
-    margin-top:28px;
-  }
-  .cd{
-    flex:1;
-    background:var(--navy);
-    padding:16px 20px;
-  }
-  .cd-label{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.1em;
-    color:#9AA0BC;
-    margin-bottom:6px;
-  }
-  .cd-value{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:28px;
-    font-weight:600;
-    color:var(--orange);
-  }
-  .cd-value span{font-size:14px;color:#C7CBDB;font-weight:500;}
+/* HEADER — edital / documento oficial */
+.edital-head{
+background:var(--navy);
+color:var(--cream);
+padding:36px 40px;
+position:relative;
+overflow:hidden;
+}
+.edital-head::before{
+content:"";
+position:absolute; inset:8px;
+border:1px solid rgba(251,246,238,0.25);
+pointer-events:none;
+}
+.head-top-row{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:16px;
+}
+.edital-eyebrow{
+font-family:'IBM Plex Mono',monospace;
+font-size:12px;
+letter-spacing:0.14em;
+text-transform:uppercase;
+color:var(--orange);
+margin-bottom:10px;
+}
+.user-badge{
+display:flex;
+align-items:center;
+gap:10px;
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+color:#C7CBDB;
+white-space:nowrap;
+}
+.logout-link{
+color:var(--orange);
+text-decoration:none;
+border:1px solid rgba(255,127,63,0.5);
+padding:5px 10px;
+text-transform:uppercase;
+letter-spacing:0.06em;
+cursor:pointer;
+background:none;
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+}
+.logout-link:hover{background:rgba(255,127,63,0.12);}
+.edital-title{
+font-family:'Fraunces',serif;
+font-weight:700;
+font-size:clamp(28px,4vw,42px);
+line-height:1.1;
+margin:0 0 8px;
+}
+.edital-sub{
+font-size:15px;
+color:#C7CBDB;
+margin:0;
+}
+.countdowns{
+display:flex;
+gap:1px;
+background:rgba(251,246,238,0.2);
+margin-top:28px;
+}
+.cd{
+flex:1;
+background:var(--navy);
+padding:16px 20px;
+}
+.cd-label{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.1em;
+color:#9AA0BC;
+margin-bottom:6px;
+}
+.cd-value{
+font-family:'IBM Plex Mono',monospace;
+font-size:28px;
+font-weight:600;
+color:var(--orange);
+}
+.cd-value span{font-size:14px;color:#C7CBDB;font-weight:500;}
 
-  /* SUMMARY STATS */
-  .stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:1px;
-    background:var(--line);
-    border:1px solid var(--line);
-    border-top:none;
-  }
-  .stat{
-    background:var(--paper);
-    padding:20px 22px;
-  }
-  .stat-label{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    color:var(--navy-soft);
-    margin-bottom:8px;
-  }
-  .stat-value{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:22px;
-    font-weight:600;
-  }
-  .stat-value.orange{color:var(--orange-deep);}
-  .stat-value.green{color:var(--green);}
-  .progress-bar{
-    margin-top:10px;
-    height:5px;
-    background:var(--line);
-    overflow:hidden;
-  }
-  .progress-fill{
-    height:100%;
-    background:var(--orange);
-    transition:width .4s ease;
-  }
+/* SUMMARY STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:1px;
+background:var(--line);
+border:1px solid var(--line);
+border-top:none;
+}
+.stat{
+background:var(--paper);
+padding:20px 22px;
+}
+.stat-label{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:0.08em;
+color:var(--navy-soft);
+margin-bottom:8px;
+}
+.stat-value{
+font-family:'IBM Plex Mono',monospace;
+font-size:22px;
+font-weight:600;
+}
+.stat-value.orange{color:var(--orange-deep);}
+.stat-value.green{color:var(--green);}
+.progress-bar{
+margin-top:10px;
+height:5px;
+background:var(--line);
+overflow:hidden;
+}
+.progress-fill{
+height:100%;
+background:var(--orange);
+transition:width .4s ease;
+}
 
-  /* LOTES */
-  .lotes-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin:40px 0 14px;
-    padding:0 2px;
-  }
-  .lotes-title{
-    font-family:'Fraunces',serif;
-    font-size:20px;
-    font-weight:600;
-  }
-  .save-indicator{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:var(--navy-soft);
-  }
-  .lote{
-    background:var(--paper);
-    border:1px solid var(--line);
-    margin-bottom:10px;
-    padding:18px 20px;
-    display:grid;
-    grid-template-columns:32px 1.4fr 1fr 0.8fr 0.8fr auto;
-    gap:14px;
-    align-items:start;
-  }
-  .lote-num{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:13px;
-    color:var(--navy-soft);
-    padding-top:6px;
-  }
-  .lote-field label{
-    display:block;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-    color:var(--navy-soft);
-    margin-bottom:4px;
-  }
-  .lote-field input, .lote-field textarea{
-    width:100%;
-    border:1px solid var(--line);
-    background:var(--cream);
-    padding:7px 9px;
-    font-family:'Inter',sans-serif;
-    font-size:13.5px;
-    color:var(--navy);
-  }
-  .lote-field textarea{resize:vertical;min-height:34px;font-size:12.5px;}
-  .lote-field input:focus, .lote-field textarea:focus{outline:2px solid var(--orange);outline-offset:0;border-color:var(--orange);}
-  .lote-item-name{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:15px;
-    margin-bottom:4px;
-  }
-  .lote-cat{
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-    color:var(--orange-deep);
-    margin-bottom:6px;
-  }
-  .status-stamp{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-    padding:7px 10px;
-    border:2px solid currentColor;
-    text-align:center;
-    cursor:pointer;
-    background:none;
-    transform:rotate(-1.5deg);
-    transition:transform .15s ease;
-    white-space:nowrap;
-  }
-  .status-stamp:hover{transform:rotate(0deg) scale(1.03);}
-  .status-aberto{color:var(--navy-soft);}
-  .status-negociacao{color:var(--amber);}
-  .status-arrematado{color:var(--orange-deep);}
-  .status-pago{color:var(--green);}
+/* LOTES */
+.lotes-head{
+display:flex;
+justify-content:space-between;
+align-items:baseline;
+margin:40px 0 14px;
+padding:0 2px;
+}
+.lotes-title{
+font-family:'Fraunces',serif;
+font-size:20px;
+font-weight:600;
+}
+.save-indicator{
+font-family:'IBM Plex Mono',monospace;
+font-size:12px;
+color:var(--navy-soft);
+}
+.lote{
+background:var(--paper);
+border:1px solid var(--line);
+margin-bottom:10px;
+padding:18px 20px;
+display:grid;
+grid-template-columns:32px 1.4fr 1fr 0.8fr 0.8fr auto;
+gap:14px;
+align-items:start;
+}
+.lote-num{
+font-family:'IBM Plex Mono',monospace;
+font-size:13px;
+color:var(--navy-soft);
+padding-top:6px;
+}
+.lote-field label{
+display:block;
+font-size:10px;
+text-transform:uppercase;
+letter-spacing:0.06em;
+color:var(--navy-soft);
+margin-bottom:4px;
+}
+.lote-field input, .lote-field textarea{
+width:100%;
+border:1px solid var(--line);
+background:var(--cream);
+padding:7px 9px;
+font-family:'Inter',sans-serif;
+font-size:13.5px;
+color:var(--navy);
+}
+.lote-field textarea{resize:vertical;min-height:34px;font-size:12.5px;}
+.lote-field input:focus, .lote-field textarea:focus{outline:2px solid var(--orange);outline-offset:0;border-color:var(--orange);}
+.lote-item-name{
+font-family:'Fraunces',serif;
+font-weight:600;
+font-size:15px;
+margin-bottom:4px;
+}
+.lote-cat{
+font-size:10.5px;
+text-transform:uppercase;
+letter-spacing:0.06em;
+color:var(--orange-deep);
+margin-bottom:6px;
+}
+.status-stamp{
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+font-weight:600;
+text-transform:uppercase;
+letter-spacing:0.06em;
+padding:7px 10px;
+border:2px solid currentColor;
+text-align:center;
+cursor:pointer;
+background:none;
+transform:rotate(-1.5deg);
+transition:transform .15s ease;
+white-space:nowrap;
+}
+.status-stamp:hover{transform:rotate(0deg) scale(1.03);}
+.status-aberto{color:var(--navy-soft);}
+.status-negociacao{color:var(--amber);}
+.status-arrematado{color:var(--orange-deep);}
+.status-pago{color:var(--green);}
 
-  .footer-note{
-    text-align:center;
-    font-size:12px;
-    color:var(--navy-soft);
-    margin-top:36px;
-  }
+.footer-note{
+text-align:center;
+font-size:12px;
+color:var(--navy-soft);
+margin-top:36px;
+}
 
-  @media (max-width:800px){
-    .stats{grid-template-columns:repeat(2,1fr);}
-    .countdowns{flex-direction:column;}
-    .lote{grid-template-columns:1fr;}
-    .lote-num{display:none;}
-  }
+@media (max-width:800px){
+.stats{grid-template-columns:repeat(2,1fr);}
+.countdowns{flex-direction:column;}
+.lote{grid-template-columns:1fr;}
+.lote-num{display:none;}
+.head-top-row{flex-direction:column;}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="edital-head">
-    <div class="edital-eyebrow">Edital nº 017/2026 — Praça Única</div>
-    <h1 class="edital-title">17 anos de Grupo Lance</h1>
-    <p class="edital-sub">Doral Guarujá · 04 de setembro de 2026 · 08h30 às 19h00 · Organização: Daniel, Anália e Paola</p>
-    <div class="countdowns">
-      <div class="cd">
-        <div class="cd-label">Prazo de preparação (tudo pronto)</div>
-        <div class="cd-value" id="cd-prep">— <span>dias</span></div>
-      </div>
-      <div class="cd">
-        <div class="cd-label">Abertura do evento</div>
-        <div class="cd-value" id="cd-event">— <span>dias</span></div>
-      </div>
-    </div>
-  </div>
+<div class="edital-head">
+<div class="head-top-row">
+<div class="edital-eyebrow">Edital nº 017/2026 — Praça Única</div>
+<div class="user-badge">
+<span id="user-name-label"></span>
+<button class="logout-link" id="logout-btn">Sair</button>
+</div>
+</div>
+<h1 class="edital-title">17 anos de Grupo Lance</h1>
+<p class="edital-sub">Doral Guarujá · 04 de setembro de 2026 · 08h30 às 19h00 · Organização: Daniel, Anália e Paola</p>
+<div class="countdowns">
+<div class="cd">
+<div class="cd-label">Prazo de preparação (tudo pronto)</div>
+<div class="cd-value" id="cd-prep">— <span>dias</span></div>
+</div>
+<div class="cd">
+<div class="cd-label">Abertura do evento</div>
+<div class="cd-value" id="cd-event">— <span>dias</span></div>
+</div>
+</div>
+</div>
 
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-label">Orçado total</div>
-      <div class="stat-value" id="st-orcado">R$ 0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Comprometido</div>
-      <div class="stat-value orange" id="st-comprometido">R$ 0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Saldo disponível</div>
-      <div class="stat-value green" id="st-saldo">R$ 0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Lotes arrematados</div>
-      <div class="stat-value" id="st-progresso">0 / 14</div>
-      <div class="progress-bar"><div class="progress-fill" id="st-progress-fill" style="width:0%"></div></div>
-    </div>
-  </div>
+<div class="stats">
+<div class="stat">
+<div class="stat-label">Orçado total</div>
+<div class="stat-value" id="st-orcado">R$ 0</div>
+</div>
+<div class="stat">
+<div class="stat-label">Comprometido</div>
+<div class="stat-value orange" id="st-comprometido">R$ 0</div>
+</div>
+<div class="stat">
+<div class="stat-label">Saldo disponível</div>
+<div class="stat-value green" id="st-saldo">R$ 0</div>
+</div>
+<div class="stat">
+<div class="stat-label">Lotes arrematados</div>
+<div class="stat-value" id="st-progresso">0 / 14</div>
+<div class="progress-bar"><div class="progress-fill" id="st-progress-fill" style="width:0%"></div></div>
+</div>
+</div>
 
-  <div class="lotes-head">
-    <div class="lotes-title">Lotes do evento</div>
-    <div class="save-indicator" id="save-indicator">carregando…</div>
-  </div>
+<div class="lotes-head">
+<div class="lotes-title">Lotes do evento</div>
+<div class="save-indicator" id="save-indicator">carregando…</div>
+</div>
 
-  <div id="lotes-container"></div>
+<div id="lotes-container"></div>
 
-  <div class="footer-note">Toque no carimbo de status para avançar: Aberto → Em Negociação → Arrematado → Pago. Tudo salva automaticamente e sincroniza entre quem tem o link.</div>
+<div class="footer-note">Toque no carimbo de status para avançar: Aberto → Em Negociação → Arrematado → Pago. Tudo salva automaticamente e sincroniza entre quem tem o link.</div>
 
 </div>
 
@@ -286,155 +321,171 @@ const STATUS_FLOW = ['aberto','negociacao','arrematado','pago'];
 const STATUS_LABEL = {aberto:'Aberto', negociacao:'Em Negociação', arrematado:'Arrematado', pago:'Pago'};
 
 const DEFAULT_LOTES = [
-  {cat:'Local e Estrutura', item:'Locação do salão e mobiliário — Doral Guarujá', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Local e Estrutura', item:'Montagem técnica (som, energia, palco)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Alimentação e Bebidas', item:'Almoço e coffee break do dia', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Alimentação e Bebidas', item:'Coquetel de encerramento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Palestrante', item:'Cachê e briefing (oratória + presença)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Decoração', item:'Ambientação temática 17 anos', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Fotografia', item:'Cobertura fotográfica do evento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Audiovisual', item:'Filmagem e edição do vídeo institucional', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Convites', item:'Convites e confirmação de presença', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Momento de Reconhecimento', item:'Placas / certificados de reconhecimento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Brindes', item:'Brindes personalizados para a equipe', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Transporte', item:'Transporte e/ou hospedagem, se necessário', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Jurídico', item:'Revisão de contratos com fornecedores', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Contingência', item:'Reserva de contingência (5–10% do orçamento)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Local e Estrutura', item:'Locação do salão e mobiliário — Doral Guarujá', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Local e Estrutura', item:'Montagem técnica (som, energia, palco)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Alimentação e Bebidas', item:'Almoço e coffee break do dia', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Alimentação e Bebidas', item:'Coquetel de encerramento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Palestrante', item:'Cachê e briefing (oratória + presença)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Decoração', item:'Ambientação temática 17 anos', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Fotografia', item:'Cobertura fotográfica do evento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Audiovisual', item:'Filmagem e edição do vídeo institucional', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Convites', item:'Convites e confirmação de presença', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Momento de Reconhecimento', item:'Placas / certificados de reconhecimento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Brindes', item:'Brindes personalizados para a equipe', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Transporte', item:'Transporte e/ou hospedagem, se necessário', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Jurídico', item:'Revisão de contratos com fornecedores', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+{cat:'Contingência', item:'Reserva de contingência (5–10% do orçamento)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
 ];
 
 let lotes = [];
 let saveTimeout = null;
 
 function fmtMoney(n){
-  return 'R$ ' + (n||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+return 'R$ ' + (n||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
 function updateCountdowns(){
-  const now = new Date();
-  const prep = new Date('2026-09-03T00:00:00-03:00');
-  const event = new Date('2026-09-04T08:30:00-03:00');
-  const diffPrep = Math.ceil((prep - now) / 86400000);
-  const diffEvent = Math.ceil((event - now) / 86400000);
-  document.getElementById('cd-prep').innerHTML = (diffPrep >= 0 ? diffPrep : 0) + ' <span>dias</span>';
-  document.getElementById('cd-event').innerHTML = (diffEvent >= 0 ? diffEvent : 0) + ' <span>dias</span>';
+const now = new Date();
+const prep = new Date('2026-09-03T00:00:00-03:00');
+const event = new Date('2026-09-04T08:30:00-03:00');
+const diffPrep = Math.ceil((prep - now) / 86400000);
+const diffEvent = Math.ceil((event - now) / 86400000);
+document.getElementById('cd-prep').innerHTML = (diffPrep >= 0 ? diffPrep : 0) + ' <span>dias</span>';
+document.getElementById('cd-event').innerHTML = (diffEvent >= 0 ? diffEvent : 0) + ' <span>dias</span>';
 }
 
 function computeStats(){
-  let orcado = 0, comprometido = 0, fechados = 0;
-  lotes.forEach(l => {
-    orcado += parseFloat(l.orcado) || 0;
-    if(l.status === 'arrematado' || l.status === 'pago'){
-      comprometido += parseFloat(l.real) || parseFloat(l.orcado) || 0;
-      fechados++;
-    }
-  });
-  document.getElementById('st-orcado').textContent = fmtMoney(orcado);
-  document.getElementById('st-comprometido').textContent = fmtMoney(comprometido);
-  document.getElementById('st-saldo').textContent = fmtMoney(orcado - comprometido);
-  document.getElementById('st-progresso').textContent = fechados + ' / ' + lotes.length;
-  document.getElementById('st-progress-fill').style.width = (fechados / lotes.length * 100) + '%';
+let orcado = 0, comprometido = 0, fechados = 0;
+lotes.forEach(l => {
+orcado += parseFloat(l.orcado) || 0;
+if(l.status === 'arrematado' || l.status === 'pago'){
+comprometido += parseFloat(l.real) || parseFloat(l.orcado) || 0;
+fechados++;
+}
+});
+document.getElementById('st-orcado').textContent = fmtMoney(orcado);
+document.getElementById('st-comprometido').textContent = fmtMoney(comprometido);
+document.getElementById('st-saldo').textContent = fmtMoney(orcado - comprometido);
+document.getElementById('st-progresso').textContent = fechados + ' / ' + lotes.length;
+document.getElementById('st-progress-fill').style.width = (fechados / lotes.length * 100) + '%';
 }
 
 function renderLotes(){
-  const container = document.getElementById('lotes-container');
-  container.innerHTML = '';
-  lotes.forEach((lote, idx) => {
-    const div = document.createElement('div');
-    div.className = 'lote';
-    div.innerHTML = `
-      <div class="lote-num">${String(idx+1).padStart(2,'0')}</div>
-      <div class="lote-field">
-        <div class="lote-cat">${lote.cat}</div>
-        <div class="lote-item-name">${lote.item}</div>
-        <label>Observações</label>
-        <textarea data-field="obs" data-idx="${idx}" rows="1">${lote.obs || ''}</textarea>
-      </div>
-      <div class="lote-field">
-        <label>Fornecedor</label>
-        <input type="text" data-field="fornecedor" data-idx="${idx}" value="${lote.fornecedor || ''}" placeholder="—">
-      </div>
-      <div class="lote-field">
-        <label>Valor orçado</label>
-        <input type="number" step="0.01" data-field="orcado" data-idx="${idx}" value="${lote.orcado || ''}" placeholder="0,00">
-      </div>
-      <div class="lote-field">
-        <label>Valor real</label>
-        <input type="number" step="0.01" data-field="real" data-idx="${idx}" value="${lote.real || ''}" placeholder="0,00">
-      </div>
-      <button class="status-stamp status-${lote.status}" data-idx="${idx}">${STATUS_LABEL[lote.status]}</button>
-    `;
-    container.appendChild(div);
-  });
+const container = document.getElementById('lotes-container');
+container.innerHTML = '';
+lotes.forEach((lote, idx) => {
+const div = document.createElement('div');
+div.className = 'lote';
+div.innerHTML = `
+<div class="lote-num">${String(idx+1).padStart(2,'0')}</div>
+<div class="lote-field">
+<div class="lote-cat">${lote.cat}</div>
+<div class="lote-item-name">${lote.item}</div>
+<label>Observações</label>
+<textarea data-field="obs" data-idx="${idx}" rows="1">${lote.obs || ''}</textarea>
+</div>
+<div class="lote-field">
+<label>Fornecedor</label>
+<input type="text" data-field="fornecedor" data-idx="${idx}" value="${lote.fornecedor || ''}" placeholder="—">
+</div>
+<div class="lote-field">
+<label>Valor orçado</label>
+<input type="number" step="0.01" data-field="orcado" data-idx="${idx}" value="${lote.orcado || ''}" placeholder="0,00">
+</div>
+<div class="lote-field">
+<label>Valor real</label>
+<input type="number" step="0.01" data-field="real" data-idx="${idx}" value="${lote.real || ''}" placeholder="0,00">
+</div>
+<button class="status-stamp status-${lote.status}" data-idx="${idx}">${STATUS_LABEL[lote.status]}</button>
+`;
+container.appendChild(div);
+});
 
-  container.querySelectorAll('input, textarea').forEach(el => {
-    el.addEventListener('input', e => {
-      const idx = +e.target.dataset.idx;
-      const field = e.target.dataset.field;
-      lotes[idx][field] = e.target.value;
-      computeStats();
-      scheduleSave();
-    });
-  });
-  container.querySelectorAll('.status-stamp').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const idx = +e.target.dataset.idx;
-      const cur = STATUS_FLOW.indexOf(lotes[idx].status);
-      const next = STATUS_FLOW[(cur + 1) % STATUS_FLOW.length];
-      lotes[idx].status = next;
-      e.target.textContent = STATUS_LABEL[next];
-      e.target.className = 'status-stamp status-' + next;
-      computeStats();
-      scheduleSave();
-    });
-  });
+container.querySelectorAll('input, textarea').forEach(el => {
+el.addEventListener('input', e => {
+const idx = +e.target.dataset.idx;
+const field = e.target.dataset.field;
+lotes[idx][field] = e.target.value;
+computeStats();
+scheduleSave();
+});
+});
+container.querySelectorAll('.status-stamp').forEach(btn => {
+btn.addEventListener('click', e => {
+const idx = +e.target.dataset.idx;
+const cur = STATUS_FLOW.indexOf(lotes[idx].status);
+const next = STATUS_FLOW[(cur + 1) % STATUS_FLOW.length];
+lotes[idx].status = next;
+e.target.textContent = STATUS_LABEL[next];
+e.target.className = 'status-stamp status-' + next;
+computeStats();
+scheduleSave();
+});
+});
 }
 
 function scheduleSave(){
-  document.getElementById('save-indicator').textContent = 'salvando…';
-  clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(async () => {
-    try{
-      const res = await fetch('/api/lotes', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({lotes})
-      });
-      if(!res.ok) throw new Error('save failed');
-      const now = new Date();
-      document.getElementById('save-indicator').textContent = 'salvo às ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-    }catch(err){
-      document.getElementById('save-indicator').textContent = 'erro ao salvar — tentando de novo';
-      console.error(err);
-    }
-  }, 700);
+document.getElementById('save-indicator').textContent = 'salvando…';
+clearTimeout(saveTimeout);
+saveTimeout = setTimeout(async () => {
+try{
+const res = await fetch('/api/lotes', {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({lotes})
+});
+if(!res.ok) throw new Error('save failed');
+const now = new Date();
+document.getElementById('save-indicator').textContent = 'salvo às ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+}catch(err){
+document.getElementById('save-indicator').textContent = 'erro ao salvar — tentando de novo';
+console.error(err);
+}
+}, 700);
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+try{ await fetch('/api/logout', {method:'POST'}); }catch(e){}
+window.location.href = '/login';
+});
+
+async function loadMe(){
+try{
+const res = await fetch('/api/me');
+if(res.ok){
+const data = await res.json();
+document.getElementById('user-name-label').textContent = data.user && data.user.name ? data.user.name : '';
+}
+}catch(e){}
 }
 
 async function init(){
-  updateCountdowns();
-  setInterval(updateCountdowns, 60000);
-  try{
-    const res = await fetch('/api/lotes');
-    const data = await res.json();
-    lotes = (data && data.lotes) ? data.lotes : JSON.parse(JSON.stringify(DEFAULT_LOTES));
-  }catch(err){
-    lotes = JSON.parse(JSON.stringify(DEFAULT_LOTES));
-  }
-  renderLotes();
-  computeStats();
-  document.getElementById('save-indicator').textContent = 'sincronizado';
+updateCountdowns();
+setInterval(updateCountdowns, 60000);
+loadMe();
+try{
+const res = await fetch('/api/lotes');
+const data = await res.json();
+lotes = (data && data.lotes) ? data.lotes : JSON.parse(JSON.stringify(DEFAULT_LOTES));
+}catch(err){
+lotes = JSON.parse(JSON.stringify(DEFAULT_LOTES));
+}
+renderLotes();
+computeStats();
+document.getElementById('save-indicator').textContent = 'sincronizado';
 
-  // Atualiza com o que outros colaboradores salvaram, a cada 8s
-  setInterval(async () => {
-    try{
-      const res = await fetch('/api/lotes');
-      const data = await res.json();
-      if(data && data.lotes && JSON.stringify(data.lotes) !== JSON.stringify(lotes) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
-        lotes = data.lotes;
-        renderLotes();
-        computeStats();
-      }
-    }catch(err){}
-  }, 8000);
+// Atualiza com o que outros colaboradores salvaram, a cada 8s
+setInterval(async () => {
+try{
+const res = await fetch('/api/lotes');
+const data = await res.json();
+if(data && data.lotes && JSON.stringify(data.lotes) !== JSON.stringify(lotes) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
+lotes = data.lotes;
+renderLotes();
+computeStats();
+}
+}catch(err){}
+}, 8000);
 }
 
 init();
