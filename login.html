@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acesso — Grupo Lance 17 anos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FBF6EE;
+  --paper:#FFFFFF;
+  --navy:#161C2E;
+  --navy-soft:#3A4260;
+  --orange:#FF7F3F;
+  --orange-deep:#E0611A;
+  --line:#E4DACB;
+  --red-muted:#A34A3B;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--cream);
+  color:var(--navy);
+  font-family:'Inter',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.card{
+  width:100%;
+  max-width:380px;
+  background:var(--paper);
+  border:1px solid var(--line);
+}
+.card-head{
+  background:var(--navy);
+  color:var(--cream);
+  padding:28px 30px;
+  position:relative;
+  overflow:hidden;
+}
+.card-head::before{
+  content:"";
+  position:absolute; inset:8px;
+  border:1px solid rgba(251,246,238,0.25);
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--orange);
+  margin-bottom:8px;
+}
+.title{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:24px;
+  line-height:1.15;
+  margin:0;
+}
+.card-body{ padding:26px 30px 30px; }
+label{
+  display:block;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--navy-soft);
+  margin:0 0 6px;
+}
+input{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--cream);
+  padding:10px 12px;
+  font-family:'Inter',sans-serif;
+  font-size:14.5px;
+  color:var(--navy);
+  margin-bottom:18px;
+}
+input:focus{ outline:2px solid var(--orange); outline-offset:0; border-color:var(--orange); }
+button{
+  width:100%;
+  border:none;
+  background:var(--orange);
+  color:var(--navy);
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:600;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  padding:12px;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+button:hover{ background:var(--orange-deep); color:var(--cream); }
+button:disabled{ opacity:.6; cursor:default; }
+.error{
+  display:none;
+  font-size:13px;
+  color:var(--red-muted);
+  background:#FBEAE6;
+  border:1px solid var(--red-muted);
+  padding:9px 12px;
+  margin-bottom:16px;
+}
+.error.show{ display:block; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-head">
+    <div class="eyebrow">Acesso Restrito</div>
+    <h1 class="title">17 anos de Grupo Lance</h1>
+  </div>
+  <div class="card-body">
+    <div class="error" id="err">Usuário ou senha inválidos.</div>
+    <form id="login-form">
+      <label for="username">Usuário</label>
+      <input type="text" id="username" autocomplete="username" autocapitalize="off" autofocus>
+      <label for="password">Senha</label>
+      <input type="password" id="password" autocomplete="current-password">
+      <button type="submit" id="btn">Entrar</button>
+    </form>
+  </div>
+</div>
+<script>
+const form = document.getElementById('login-form');
+const err = document.getElementById('err');
+const btn = document.getElementById('btn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  err.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = 'Entrando…';
+  try{
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+      })
+    });
+    if(res.ok){
+      window.location.href = '/';
+    } else {
+      err.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  }catch(e){
+    err.textContent = 'Erro de conexão — tente novamente.';
+    err.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  }
+});
+</script>
+</body>
+</html>
+
