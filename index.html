@@ -93,15 +93,16 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
 .lote-field input, .lote-field textarea{width:100%;border:1px solid var(--border);background:var(--bg);padding:7px 9px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);border-radius:5px;}
 .lote-field textarea{resize:vertical;min-height:34px;font-size:12px;}
 .lote-field input:focus, .lote-field textarea:focus{outline:none;border-color:var(--orange);}
+.add-obs-link{background:none;border:none;color:var(--text-mute);font-size:11px;cursor:pointer;padding:2px 0;text-decoration:underline;font-family:'Inter',sans-serif;}
+.add-obs-link:hover{color:var(--orange);}
 .lote-item-name{font-family:'Fraunces',serif;font-weight:600;font-size:14.5px;margin-bottom:4px;color:#fff;}
 .lote-cat{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--orange);margin-bottom:6px;}
 .edit-cat-input{width:100%;background:var(--bg);border:1px solid var(--orange);border-radius:5px;padding:6px 8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--orange);margin-bottom:6px;font-family:'Inter',sans-serif;}
 .edit-item-input{width:100%;background:var(--bg);border:1px solid var(--orange);border-radius:5px;padding:7px 9px;font-family:'Fraunces',serif;font-weight:600;font-size:14.5px;color:#fff;margin-bottom:6px;}
 .status-stamp{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1.5px solid currentColor;border-radius:5px;text-align:center;cursor:pointer;background:none;white-space:nowrap;transition:transform .15s ease;}
 .status-stamp:hover{transform:scale(1.03);}
-.status-aberto{color:var(--text-soft);}
-.status-negociacao{color:var(--amber);}
-.status-arrematado{color:var(--orange);}
+.status-orcando{color:var(--text-soft);}
+.status-parcial{color:var(--amber);}
 .status-pago{color:var(--green);}
 .lote.hidden{display:none;}
 .lote-actions{display:flex;flex-direction:column;align-items:stretch;gap:6px;}
@@ -148,7 +149,7 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
 <div class="wrap">
 
   <div class="event-hero">
-    <div class="event-eyebrow">Edital nº 017/2026 — Praça Única</div>
+    <div class="event-eyebrow">Organização interna · Grupo Lance</div>
     <h1 class="event-title">17 anos de Grupo Lance</h1>
     <p class="event-sub">Doral Guarujá · 04 de setembro de 2026 · 08h30 às 19h00 · Organização: Daniel, Anália e Paola</p>
     <div class="countdowns">
@@ -217,9 +218,8 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
   </div>
   <div class="filter-chips" id="status-chips">
     <div class="chip active" data-status="todos">Todos</div>
-    <div class="chip" data-status="aberto">Aberto</div>
-    <div class="chip" data-status="negociacao">Em Negociação</div>
-    <div class="chip" data-status="arrematado">Arrematado</div>
+    <div class="chip" data-status="orcando">Orçando</div>
+    <div class="chip" data-status="parcial">Parcial</div>
     <div class="chip" data-status="pago">Pago</div>
   </div>
 
@@ -234,9 +234,9 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
   </div>
 
   <div class="lotes-head">
-    <div class="section-title" style="margin:0;">Lotes do evento</div>
+    <div class="section-title" style="margin:0;">Itens do evento</div>
     <div class="lotes-head-right">
-      <button class="btn-add-lote" id="add-lote-btn">+ Novo lote</button>
+      <button class="btn-add-lote" id="add-lote-btn">+ Novo item</button>
       <button class="btn-add-lote" id="add-brinde-btn" style="border-color:var(--green);color:var(--green);">+ Novo brinde</button>
       <div class="save-indicator" id="save-indicator">carregando…</div>
     </div>
@@ -244,30 +244,31 @@ table.cat-table tr:hover td{background:var(--bg-elev-2);}
 
   <div id="lotes-container"></div>
 
-  <div class="footer-note">Toque no carimbo de status para avançar: Aberto → Em Negociação → Arrematado → Pago. Use os ícones ✎ e 🗑 para editar ou excluir um lote. Tudo salva automaticamente e sincroniza entre quem tem o link.</div>
+  <div class="footer-note">Toque no carimbo de status para avançar: Orçando → Parcial → Pago. Use ▲ ▼ para reordenar e os ícones ✎ e 🗑 para editar ou excluir um item. Tudo salva automaticamente e sincroniza entre quem tem o link.</div>
 
 </div>
 
 <script>
-const STATUS_FLOW = ['aberto','negociacao','arrematado','pago'];
-const STATUS_LABEL = {aberto:'Aberto', negociacao:'Em Negociação', arrematado:'Arrematado', pago:'Pago'};
+const STATUS_FLOW = ['orcando','parcial','pago'];
+const STATUS_LABEL = {orcando:'Orçando', parcial:'Parcial', pago:'Pago'};
+const STATUS_MIGRATE = {aberto:'orcando', negociacao:'parcial', arrematado:'parcial', pago:'pago'};
 const CAT_COLORS = ['#FF7F3F','#3ECF8E','#F5B942','#5B8DEF','#C77DFF','#4FD1C5','#FF6B5C','#9AA0BC'];
 
 const DEFAULT_LOTES = [
-  {cat:'Local e Estrutura', item:'Locação do salão e mobiliário — Doral Guarujá', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Local e Estrutura', item:'Montagem técnica (som, energia, palco)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Alimentação e Bebidas', item:'Almoço e coffee break do dia', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Alimentação e Bebidas', item:'Coquetel de encerramento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Palestrante', item:'Cachê e briefing (oratória + presença)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Decoração', item:'Ambientação temática 17 anos', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Fotografia', item:'Cobertura fotográfica do evento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Audiovisual', item:'Filmagem e edição do vídeo institucional', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Convites', item:'Convites e confirmação de presença', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Momento de Reconhecimento', item:'Placas / certificados de reconhecimento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Brindes', item:'Brindes personalizados para a equipe', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Transporte', item:'Transporte e/ou hospedagem, se necessário', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Jurídico', item:'Revisão de contratos com fornecedores', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
-  {cat:'Contingência', item:'Reserva de contingência (5–10% do orçamento)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Local e Estrutura', item:'Locação do salão e mobiliário — Doral Guarujá', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Local e Estrutura', item:'Montagem técnica (som, energia, palco)', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Alimentação e Bebidas', item:'Almoço e coffee break do dia', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Alimentação e Bebidas', item:'Coquetel de encerramento', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Palestrante', item:'Cachê e briefing (oratória + presença)', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Decoração', item:'Ambientação temática 17 anos', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Fotografia', item:'Cobertura fotográfica do evento', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Audiovisual', item:'Filmagem e edição do vídeo institucional', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Convites', item:'Convites e confirmação de presença', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Momento de Reconhecimento', item:'Placas / certificados de reconhecimento', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Brindes', item:'Brindes personalizados para a equipe', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Transporte', item:'Transporte e/ou hospedagem, se necessário', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Jurídico', item:'Revisão de contratos com fornecedores', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
+  {cat:'Contingência', item:'Reserva de contingência (5–10% do orçamento)', fornecedor:'', orcado:'', real:'', status:'orcando', obs:''},
 ];
 
 let lotes = [];
@@ -276,6 +277,15 @@ let activeKpiFilter = 'all';
 let activeStatusChip = 'todos';
 let searchQuery = '';
 let editingIdx = null;
+let obsExpanded = new Set();
+
+function migrateLotes(arr){
+  arr.forEach(l => {
+    if(STATUS_MIGRATE[l.status]) l.status = STATUS_MIGRATE[l.status];
+    else if(!STATUS_FLOW.includes(l.status)) l.status = 'orcando';
+  });
+  return arr;
+}
 
 function toNumberBR(v){
   if(v === '' || v === null || v === undefined) return 0;
@@ -299,7 +309,8 @@ function formatBRLDisplay(v){
 }
 
 function isCommitted(l){
-  return !!l.pago;
+  if(l.tipo === 'brinde') return !!l.pago;
+  return l.status === 'pago';
 }
 
 function fmtMoney(n){
@@ -415,8 +426,12 @@ function renderLotes(){
           <div class="lote-cat">${lote.cat}${isBrinde ? ' · Brinde' : ''}</div>
           <div class="lote-item-name">${lote.item}</div>
         `}
-        <label>Observações</label>
-        <textarea data-field="obs" data-idx="${idx}" rows="1">${lote.obs || ''}</textarea>
+        ${(lote.obs && lote.obs.trim()) || obsExpanded.has(idx) ? `
+          <label>Observações</label>
+          <textarea data-field="obs" data-idx="${idx}" rows="1">${lote.obs || ''}</textarea>
+        ` : `
+          <button type="button" class="add-obs-link" data-idx="${idx}">+ Observação</button>
+        `}
       </div>
       <div class="lote-field">
         <label>Fornecedor</label>
@@ -432,9 +447,9 @@ function renderLotes(){
       </div>
       <div class="lote-actions">
         ${isBrinde
-          ? `<div class="status-stamp ${lote.fechado ? 'status-pago' : 'status-aberto'}" style="cursor:default;">${lote.fechado ? 'Fechado' : 'Em aberto'}</div>`
+          ? `<div class="status-stamp ${lote.fechado ? 'status-pago' : 'status-orcando'}" style="cursor:default;">${lote.fechado ? 'Fechado' : 'Em aberto'}</div>
+             <button class="toggle-stamp ${lote.pago ? 'toggle-yes' : 'toggle-no'}" data-toggle="pago" data-idx="${idx}" title="Marcar como pago ou pendente">${lote.pago ? '✓ Pago' : 'Pendente'}</button>`
           : `<button class="status-stamp status-${lote.status}" data-idx="${idx}">${STATUS_LABEL[lote.status]}</button>`}
-        <button class="toggle-stamp ${lote.pago ? 'toggle-yes' : 'toggle-no'}" data-toggle="pago" data-idx="${idx}" title="Marcar como pago ou pendente">${lote.pago ? '✓ Pago' : 'Pendente'}</button>
         <div class="lote-icons">
           <button class="icon-btn" data-action="moveup" data-idx="${idx}" title="Mover para cima" ${idx===0?'disabled':''}>▲</button>
           <button class="icon-btn" data-action="movedown" data-idx="${idx}" title="Mover para baixo" ${idx===lotes.length-1?'disabled':''}>▼</button>
@@ -475,6 +490,18 @@ function renderLotes(){
       lotes[idx][field] = e.target.value;
       computeStats();
       scheduleSave();
+    });
+  });
+
+  container.querySelectorAll('.add-obs-link').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = +e.target.dataset.idx;
+      obsExpanded.add(idx);
+      renderLotes();
+      setTimeout(() => {
+        const ta = container.querySelector(`textarea[data-field="obs"][data-idx="${idx}"]`);
+        if(ta) ta.focus();
+      }, 0);
     });
   });
 
@@ -625,7 +652,7 @@ document.getElementById('search-input').addEventListener('keydown', e => {
 });
 
 document.getElementById('add-lote-btn').addEventListener('click', () => {
-  lotes.push({cat:'Nova categoria', item:'Novo item', fornecedor:'', orcado:'', real:'', status:'aberto', obs:'', pago:false});
+  lotes.push({cat:'Nova categoria', item:'Novo item', fornecedor:'', orcado:'', real:'', status:'orcando', obs:'', pago:false});
   editingIdx = lotes.length - 1;
   activeKpiFilter = 'all';
   activeStatusChip = 'todos';
@@ -643,7 +670,7 @@ document.getElementById('add-lote-btn').addEventListener('click', () => {
 });
 
 document.getElementById('add-brinde-btn').addEventListener('click', () => {
-  lotes.push({cat:'Brindes', item:'Novo brinde', fornecedor:'', orcado:'', real:'', status:'aberto', obs:'', tipo:'brinde', comprado:false, fechado:false, previsao:'', pago:false});
+  lotes.push({cat:'Brindes', item:'Novo brinde', fornecedor:'', orcado:'', real:'', status:'orcando', obs:'', tipo:'brinde', comprado:false, fechado:false, previsao:'', pago:false});
   editingIdx = lotes.length - 1;
   activeKpiFilter = 'all';
   activeStatusChip = 'todos';
@@ -677,9 +704,9 @@ async function init(){
   try{
     const res = await fetch('/api/lotes');
     const data = await res.json();
-    lotes = (data && data.lotes) ? data.lotes : JSON.parse(JSON.stringify(DEFAULT_LOTES));
+    lotes = migrateLotes((data && data.lotes) ? data.lotes : JSON.parse(JSON.stringify(DEFAULT_LOTES)));
   }catch(err){
-    lotes = JSON.parse(JSON.stringify(DEFAULT_LOTES));
+    lotes = migrateLotes(JSON.parse(JSON.stringify(DEFAULT_LOTES)));
   }
   renderLotes();
   computeStats();
@@ -690,7 +717,7 @@ async function init(){
       const res = await fetch('/api/lotes');
       const data = await res.json();
       if(data && data.lotes && JSON.stringify(data.lotes) !== JSON.stringify(lotes) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && editingIdx === null){
-        lotes = data.lotes;
+        lotes = migrateLotes(data.lotes);
         renderLotes();
         computeStats();
       }
