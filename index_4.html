@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo Lance — 17 anos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0F1C;
+  --bg-elev:#121729;
+  --bg-elev-2:#171d33;
+  --border:#262d45;
+  --text:#E7E9F5;
+  --text-soft:#9AA0BC;
+  --text-mute:#666d8c;
+  --orange:#FF7F3F;
+  --orange-deep:#E0611A;
+  --green:#3ECF8E;
+  --amber:#F5B942;
+  --red:#FF6B5C;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 60px;}
+
+.navbar{display:flex;justify-content:space-between;align-items:center;background:var(--bg-elev);border-bottom:1px solid var(--border);padding:14px 28px;margin-bottom:28px;}
+.navbar-left{display:flex;align-items:center;gap:12px;}
+.logo-badge{width:32px;height:32px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;color:#1a1206;}
+.navbar-title{font-weight:600;font-size:14.5px;}
+.navbar-title span{color:var(--text-soft);font-weight:400;margin-left:8px;}
+.navbar-right{display:flex;align-items:center;gap:12px;}
+.user-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-soft);}
+.logout-link{color:var(--orange);text-decoration:none;border:1px solid rgba(255,127,63,0.5);padding:6px 12px;border-radius:6px;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;background:none;font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.logout-link:hover{background:rgba(255,127,63,0.12);}
+
+.event-hero{background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;padding:28px 32px;margin-bottom:22px;}
+.event-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+.event-title{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(24px,3.2vw,34px);line-height:1.1;margin:0 0 8px;color:#fff;}
+.event-sub{font-size:14px;color:var(--text-soft);margin:0 0 20px;}
+.countdowns{display:flex;gap:14px;}
+.cd{flex:1;background:var(--bg-elev-2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;}
+.cd-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-soft);margin-bottom:6px;}
+.cd-value{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:var(--orange);}
+.cd-value span{font-size:13px;color:var(--text-soft);font-weight:500;}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.kpi-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;padding:18px 20px;cursor:pointer;transition:border-color .15s;}
+.kpi-card:hover{border-color:var(--orange);}
+.kpi-card.active{border-color:var(--orange);background:var(--bg-elev-2);}
+.kpi-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.kpi-label{display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);}
+.kpi-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.kpi-click{font-size:10.5px;color:var(--orange);font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+.kpi-value{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;}
+.kpi-sub{font-size:11.5px;color:var(--text-soft);margin-top:6px;}
+.progress-bar{margin-top:10px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--orange);transition:width .4s ease;}
+
+.alert-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:rgba(245,185,66,0.08);border-left:3px solid var(--amber);padding:12px 18px;margin-bottom:18px;border-radius:4px;font-size:13px;color:var(--text);}
+.alert-bar a{color:var(--orange);text-decoration:none;font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+
+.search-row{display:flex;gap:10px;margin-bottom:14px;}
+.search-input{flex:1;background:var(--bg-elev);border:1px solid var(--border);border-radius:6px;padding:11px 14px;color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;}
+.search-input::placeholder{color:var(--text-mute);}
+.search-input:focus{outline:none;border-color:var(--orange);}
+.btn-orange{background:var(--orange);color:#1a1206;border:none;padding:11px 22px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;}
+.btn-orange:hover{background:var(--orange-deep);}
+.filter-chips{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.chip{background:var(--bg-elev);border:1px solid var(--border);color:var(--text-soft);padding:7px 14px;border-radius:20px;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.chip.active{background:var(--orange);border-color:var(--orange);color:#1a1206;font-weight:600;}
+
+.section-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0 0 14px;color:#fff;}
+.cat-table-wrap{background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:30px;}
+table.cat-table{width:100%;border-collapse:collapse;font-size:13px;}
+table.cat-table th{text-align:left;padding:12px 16px;font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-soft);border-bottom:1px solid var(--border);background:var(--bg-elev-2);}
+table.cat-table td{padding:11px 16px;border-bottom:1px solid var(--border);}
+table.cat-table tr:last-child td{border-bottom:none;}
+table.cat-table tr:hover td{background:var(--bg-elev-2);}
+.cat-swatch{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:8px;}
+.var-up{color:var(--green);}
+.var-down{color:var(--red);}
+
+.lotes-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
+.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-soft);}
+.lote{background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;padding:16px 20px;display:grid;grid-template-columns:30px 1.4fr 1fr 0.8fr 0.8fr auto;gap:14px;align-items:start;}
+.lote-num{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-mute);padding-top:6px;}
+.lote-field label{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-soft);margin-bottom:4px;}
+.lote-field input, .lote-field textarea{width:100%;border:1px solid var(--border);background:var(--bg);padding:7px 9px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);border-radius:5px;}
+.lote-field textarea{resize:vertical;min-height:34px;font-size:12px;}
+.lote-field input:focus, .lote-field textarea:focus{outline:none;border-color:var(--orange);}
+.lote-item-name{font-family:'Fraunces',serif;font-weight:600;font-size:14.5px;margin-bottom:4px;color:#fff;}
+.lote-cat{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--orange);margin-bottom:6px;}
+.status-stamp{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1.5px solid currentColor;border-radius:5px;text-align:center;cursor:pointer;background:none;white-space:nowrap;transition:transform .15s ease;}
+.status-stamp:hover{transform:scale(1.03);}
+.status-aberto{color:var(--text-soft);}
+.status-negociacao{color:var(--amber);}
+.status-arrematado{color:var(--orange);}
+.status-pago{color:var(--green);}
+.lote.hidden{display:none;}
+
+.footer-note{text-align:center;font-size:12px;color:var(--text-mute);margin-top:36px;}
+
+@media (max-width:900px){
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .countdowns{flex-direction:column;}
+  .lote{grid-template-columns:1fr;}
+  .lote-num{display:none;}
+  table.cat-table{font-size:12px;}
+}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <div class="navbar-left">
+    <div class="logo-badge">GL</div>
+    <div class="navbar-title">Grupo Lance <span>17 anos</span></div>
+  </div>
+  <div class="navbar-right">
+    <span class="user-badge" id="user-name-label"></span>
+    <button class="logout-link" id="logout-btn">Sair</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="event-hero">
+  <div class="event-eyebrow">Edital nº 017/2026 — Praça Única</div>
+  <h1 class="event-title">17 anos de Grupo Lance</h1>
+  <p class="event-sub">Doral Guarujá · 04 de setembro de 2026 · 08h30 às 19h00 · Organização: Daniel, Anália e Paola</p>
+  <div class="countdowns">
+    <div class="cd">
+      <div class="cd-label">Prazo de preparação (tudo pronto)</div>
+      <div class="cd-value" id="cd-prep">— <span>dias</span></div>
+    </div>
+    <div class="cd">
+      <div class="cd-label">Abertura do evento</div>
+      <div class="cd-value" id="cd-event">— <span>dias</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card active" data-filter="all">
+    <div class="kpi-card-head">
+      <div class="kpi-label"><span class="kpi-dot" style="background:var(--text-soft)"></span>Orçado total</div>
+      <div class="kpi-click">CLIQUE →</div>
+    </div>
+    <div class="kpi-value" id="st-orcado">R$ 0</div>
+    <div class="kpi-sub" id="st-orcado-sub">14 lotes no total</div>
+  </div>
+  <div class="kpi-card" data-filter="comprometido">
+    <div class="kpi-card-head">
+      <div class="kpi-label"><span class="kpi-dot" style="background:var(--orange)"></span>Comprometido</div>
+      <div class="kpi-click">CLIQUE →</div>
+    </div>
+    <div class="kpi-value" id="st-comprometido" style="color:var(--orange)">R$ 0</div>
+    <div class="kpi-sub" id="st-comprometido-sub">arrematado + pago</div>
+  </div>
+  <div class="kpi-card" data-filter="pendente">
+    <div class="kpi-card-head">
+      <div class="kpi-label"><span class="kpi-dot" style="background:var(--green)"></span>Saldo disponível</div>
+      <div class="kpi-click">CLIQUE →</div>
+    </div>
+    <div class="kpi-value" id="st-saldo" style="color:var(--green)">R$ 0</div>
+    <div class="kpi-sub" id="st-saldo-sub">orçado − comprometido</div>
+  </div>
+  <div class="kpi-card" data-filter="arrematado">
+    <div class="kpi-card-head">
+      <div class="kpi-label"><span class="kpi-dot" style="background:var(--orange)"></span>Lotes arrematados</div>
+      <div class="kpi-click">CLIQUE →</div>
+    </div>
+    <div class="kpi-value" id="st-progresso">0 / 14</div>
+    <div class="progress-bar"><div class="progress-fill" id="st-progress-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="alert-bar" id="alert-bar" style="display:none;">
+  <span id="alert-text"></span>
+  <a href="#lotes-container" id="alert-link">Revisar →</a>
+</div>
+
+<div class="search-row">
+  <input type="text" class="search-input" id="search-input" placeholder="Pesquisar item, categoria ou fornecedor...">
+  <button class="btn-orange" id="search-btn">Buscar</button>
+</div>
+<div class="filter-chips" id="status-chips">
+  <div class="chip active" data-status="todos">Todos</div>
+  <div class="chip" data-status="aberto">Aberto</div>
+  <div class="chip" data-status="negociacao">Em Negociação</div>
+  <div class="chip" data-status="arrematado">Arrematado</div>
+  <div class="chip" data-status="pago">Pago</div>
+</div>
+
+<div class="section-title">Distribuição por categoria</div>
+<div class="cat-table-wrap">
+  <table class="cat-table">
+    <thead>
+      <tr><th>#</th><th>Categoria</th><th>Comprometido</th><th>% do total</th><th>Orçado</th><th>Var.</th></tr>
+    </thead>
+    <tbody id="cat-table-body"></tbody>
+  </table>
+</div>
+
+<div class="lotes-head">
+  <div class="section-title" style="margin:0;">Lotes do evento</div>
+  <div class="save-indicator" id="save-indicator">carregando…</div>
+</div>
+
+<div id="lotes-container"></div>
+
+<div class="footer-note">Toque no carimbo de status para avançar: Aberto → Em Negociação → Arrematado → Pago. Tudo salva automaticamente e sincroniza entre quem tem o link.</div>
+
+</div>
+
+<script>
+const STATUS_FLOW = ['aberto','negociacao','arrematado','pago'];
+const STATUS_LABEL = {aberto:'Aberto', negociacao:'Em Negociação', arrematado:'Arrematado', pago:'Pago'};
+const CAT_COLORS = ['#FF7F3F','#3ECF8E','#F5B942','#5B8DEF','#C77DFF','#4FD1C5','#FF6B5C','#9AA0BC'];
+
+const DEFAULT_LOTES = [
+  {cat:'Local e Estrutura', item:'Locação do salão e mobiliário — Doral Guarujá', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Local e Estrutura', item:'Montagem técnica (som, energia, palco)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Alimentação e Bebidas', item:'Almoço e coffee break do dia', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Alimentação e Bebidas', item:'Coquetel de encerramento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Palestrante', item:'Cachê e briefing (oratória + presença)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Decoração', item:'Ambientação temática 17 anos', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Fotografia', item:'Cobertura fotográfica do evento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Audiovisual', item:'Filmagem e edição do vídeo institucional', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Convites', item:'Convites e confirmação de presença', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Momento de Reconhecimento', item:'Placas / certificados de reconhecimento', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Brindes', item:'Brindes personalizados para a equipe', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Transporte', item:'Transporte e/ou hospedagem, se necessário', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Jurídico', item:'Revisão de contratos com fornecedores', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+  {cat:'Contingência', item:'Reserva de contingência (5–10% do orçamento)', fornecedor:'', orcado:'', real:'', status:'aberto', obs:''},
+];
+
+let lotes = [];
+let saveTimeout = null;
+let activeKpiFilter = 'all';
+let activeStatusChip = 'todos';
+let searchQuery = '';
+
+function fmtMoney(n){
+  return 'R$ ' + (n||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function updateCountdowns(){
+  const now = new Date();
+  const prep = new Date('2026-09-03T00:00:00-03:00');
+  const event = new Date('2026-09-04T08:30:00-03:00');
+  const diffPrep = Math.ceil((prep - now) / 86400000);
+  const diffEvent = Math.ceil((event - now) / 86400000);
+  document.getElementById('cd-prep').innerHTML = (diffPrep >= 0 ? diffPrep : 0) + ' <span>dias</span>';
+  document.getElementById('cd-event').innerHTML = (diffEvent >= 0 ? diffEvent : 0) + ' <span>dias</span>';
+}
+
+function computeStats(){
+  let orcado = 0, comprometido = 0, fechados = 0;
+  lotes.forEach(l => {
+    orcado += parseFloat(l.orcado) || 0;
+    if(l.status === 'arrematado' || l.status === 'pago'){
+      comprometido += parseFloat(l.real) || parseFloat(l.orcado) || 0;
+      fechados++;
+    }
+  });
+  document.getElementById('st-orcado').textContent = fmtMoney(orcado);
+  document.getElementById('st-orcado-sub').textContent = lotes.length + ' lotes no total';
+  document.getElementById('st-comprometido').textContent = fmtMoney(comprometido);
+  document.getElementById('st-saldo').textContent = fmtMoney(orcado - comprometido);
+  document.getElementById('st-progresso').textContent = fechados + ' / ' + lotes.length;
+  document.getElementById('st-progress-fill').style.width = (lotes.length ? (fechados / lotes.length * 100) : 0) + '%';
+  renderAlert(orcado, comprometido);
+  renderCatTable();
+}
+
+function renderAlert(){
+  const semOrcamento = lotes.filter(l => !parseFloat(l.orcado)).length;
+  const estourados = lotes.filter(l => parseFloat(l.real) > parseFloat(l.orcado) && parseFloat(l.orcado) > 0).length;
+  const bar = document.getElementById('alert-bar');
+  const parts = [];
+  if(semOrcamento) parts.push(semOrcamento + ' lote(s) ainda sem valor orçado definido');
+  if(estourados) parts.push(estourados + ' lote(s) acima do valor orçado');
+  if(parts.length){
+    bar.style.display = 'flex';
+    document.getElementById('alert-text').textContent = '⚠ ' + parts.join(' · ');
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function renderCatTable(){
+  const cats = {};
+  lotes.forEach(l => {
+    if(!cats[l.cat]) cats[l.cat] = {orcado:0, comprometido:0};
+    cats[l.cat].orcado += parseFloat(l.orcado) || 0;
+    if(l.status === 'arrematado' || l.status === 'pago'){
+      cats[l.cat].comprometido += parseFloat(l.real) || parseFloat(l.orcado) || 0;
+    }
+  });
+  const totalComprometido = Object.values(cats).reduce((s,c) => s + c.comprometido, 0);
+  const rows = Object.keys(cats).map((cat, i) => {
+    const c = cats[cat];
+    const pct = totalComprometido ? (c.comprometido / totalComprometido * 100) : 0;
+    const varPct = c.orcado ? ((c.orcado - c.comprometido) / c.orcado * 100) : 0;
+    const varClass = varPct >= 0 ? 'var-up' : 'var-down';
+    const varArrow = varPct >= 0 ? '▼' : '▲';
+    const color = CAT_COLORS[i % CAT_COLORS.length];
+    return `<tr>
+      <td>${i+1}</td>
+      <td><span class="cat-swatch" style="background:${color}"></span>${cat}</td>
+      <td>${fmtMoney(c.comprometido)}</td>
+      <td>${pct.toFixed(1)}%</td>
+      <td>${fmtMoney(c.orcado)}</td>
+      <td class="${varClass}">${varArrow} ${Math.abs(varPct).toFixed(0)}%</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cat-table-body').innerHTML = rows || '<tr><td colspan="6" style="color:var(--text-mute);">Sem dados ainda</td></tr>';
+}
+
+function matchesFilters(l){
+  if(activeKpiFilter === 'comprometido' && !(l.status === 'arrematado' || l.status === 'pago')) return false;
+  if(activeKpiFilter === 'pendente' && (l.status === 'arrematado' || l.status === 'pago')) return false;
+  if(activeKpiFilter === 'arrematado' && l.status !== 'arrematado' && l.status !== 'pago') return false;
+  if(activeStatusChip !== 'todos' && l.status !== activeStatusChip) return false;
+  if(searchQuery){
+    const q = searchQuery.toLowerCase();
+    const hay = (l.item + ' ' + l.cat + ' ' + (l.fornecedor||'')).toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function renderLotes(){
+  const container = document.getElementById('lotes-container');
+  container.innerHTML = '';
+  lotes.forEach((lote, idx) => {
+    if(!matchesFilters(lote)) return;
+    const div = document.createElement('div');
+    div.className = 'lote';
+    div.innerHTML = `
+      <div class="lote-num">${String(idx+1).padStart(2,'0')}</div>
+      <div class="lote-field">
+        <div class="lote-cat">${lote.cat}</div>
+        <div class="lote-item-name">${lote.item}</div>
+        <label>Observações</label>
+        <textarea data-field="obs" data-idx="${idx}" rows="1">${lote.obs || ''}</textarea>
+      </div>
+      <div class="lote-field">
+        <label>Fornecedor</label>
+        <input type="text" data-field="fornecedor" data-idx="${idx}" value="${lote.fornecedor || ''}" placeholder="—">
+      </div>
+      <div class="lote-field">
+        <label>Valor orçado</label>
+        <input type="number" step="0.01" data-field="orcado" data-idx="${idx}" value="${lote.orcado || ''}" placeholder="0,00">
+      </div>
+      <div class="lote-field">
+        <label>Valor real</label>
+        <input type="number" step="0.01" data-field="real" data-idx="${idx}" value="${lote.real || ''}" placeholder="0,00">
+      </div>
+      <button class="status-stamp status-${lote.status}" data-idx="${idx}">${STATUS_LABEL[lote.status]}</button>
+    `;
+    container.appendChild(div);
+  });
+
+  container.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('input', e => {
+      const idx = +e.target.dataset.idx;
+      const field = e.target.dataset.field;
+      lotes[idx][field] = e.target.value;
+      computeStats();
+      scheduleSave();
+    });
+  });
+  container.querySelectorAll('.status-stamp').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = +e.target.dataset.idx;
+      const cur = STATUS_FLOW.indexOf(lotes[idx].status);
+      const next = STATUS_FLOW[(cur + 1) % STATUS_FLOW.length];
+      lotes[idx].status = next;
+      computeStats();
+      renderLotes();
+      scheduleSave();
+    });
+  });
+}
+
+function scheduleSave(){
+  document.getElementById('save-indicator').textContent = 'salvando…';
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    try{
+      const res = await fetch('/api/lotes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({lotes})
+      });
+      if(!res.ok) throw new Error('save failed');
+      const now = new Date();
+      document.getElementById('save-indicator').textContent = 'salvo às ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    }catch(err){
+      document.getElementById('save-indicator').textContent = 'erro ao salvar — tentando de novo';
+      console.error(err);
+    }
+  }, 700);
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  try{ await fetch('/api/logout', {method:'POST'}); }catch(e){}
+  window.location.href = '/login';
+});
+
+document.querySelectorAll('.kpi-card').forEach(card => {
+  card.addEventListener('click', () => {
+    activeKpiFilter = card.dataset.filter;
+    document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    renderLotes();
+    document.getElementById('lotes-container').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    activeStatusChip = chip.dataset.status;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderLotes();
+  });
+});
+
+document.getElementById('search-btn').addEventListener('click', () => {
+  searchQuery = document.getElementById('search-input').value.trim();
+  renderLotes();
+});
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    searchQuery = e.target.value.trim();
+    renderLotes();
+  }
+});
+
+async function loadMe(){
+  try{
+    const res = await fetch('/api/me');
+    if(res.ok){
+      const data = await res.json();
+      document.getElementById('user-name-label').textContent = data.user && data.user.name ? data.user.name : '';
+    }
+  }catch(e){}
+}
+
+async function init(){
+  updateCountdowns();
+  setInterval(updateCountdowns, 60000);
+  loadMe();
+  try{
+    const res = await fetch('/api/lotes');
+    const data = await res.json();
+    lotes = (data && data.lotes) ? data.lotes : JSON.parse(JSON.stringify(DEFAULT_LOTES));
+  }catch(err){
+    lotes = JSON.parse(JSON.stringify(DEFAULT_LOTES));
+  }
+  renderLotes();
+  computeStats();
+  document.getElementById('save-indicator').textContent = 'sincronizado';
+
+  setInterval(async () => {
+    try{
+      const res = await fetch('/api/lotes');
+      const data = await res.json();
+      if(data && data.lotes && JSON.stringify(data.lotes) !== JSON.stringify(lotes) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
+        lotes = data.lotes;
+        renderLotes();
+        computeStats();
+      }
+    }catch(err){}
+  }, 8000);
+}
+
+init();
+</script>
+</body>
+</html>
