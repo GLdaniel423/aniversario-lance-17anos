@@ -574,6 +574,12 @@ function getGroups(){
   });
   groups.forEach((g, i) => g.color = CAT_COLORS[i % CAT_COLORS.length]);
   groups.forEach(g => g.entries.sort((a, b) => itemPriority(a.lote) - itemPriority(b.lote)));
+  // Categoria inteira sobe se estiver mais paga/pronta que as outras.
+  groups.sort((a, b) => {
+    const readyA = a.entries.length ? a.entries.filter(e => isCommitted(e.lote)).length / a.entries.length : 0;
+    const readyB = b.entries.length ? b.entries.filter(e => isCommitted(e.lote)).length / b.entries.length : 0;
+    return readyB - readyA;
+  });
   return groups;
 }
 
