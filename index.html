@@ -6,6 +6,7 @@
 <title>Grupo Lance — 17 anos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root{
   --bg:#0B0F1C;
@@ -50,6 +51,23 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
 .cd-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-soft);margin-bottom:6px;}
 .cd-value{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:var(--orange);font-variant-numeric:tabular-nums;}
 .cd-value span{font-size:13px;color:var(--text-soft);font-weight:500;}
+
+/* ---- painel de visao geral (pizza) ---- */
+.overview-panel{background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:18px;display:flex;align-items:center;gap:36px;flex-wrap:wrap;}
+.overview-chart-wrap{position:relative;width:180px;height:180px;flex-shrink:0;}
+.overview-chart-center{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+.overview-chart-pct{font-family:'Fraunces',serif;font-weight:700;font-size:30px;color:#fff;line-height:1;}
+.overview-chart-label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-top:4px;}
+.overview-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;flex:1;min-width:260px;}
+.overview-stat{display:flex;align-items:center;gap:10px;}
+.overview-stat-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.overview-stat-value{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:600;color:#fff;line-height:1.15;font-variant-numeric:tabular-nums;}
+.overview-stat-label{font-size:11.5px;color:var(--text-soft);}
+.overview-stat-highlight .overview-stat-value{color:var(--orange);}
+@media (max-width:640px){
+  .overview-panel{flex-direction:column;align-items:flex-start;}
+  .overview-chart-wrap{align-self:center;}
+}
 
 .kpi-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1.3fr;gap:10px;margin-bottom:16px;}
 .kpi-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;padding:15px 16px;cursor:pointer;transition:border-color .15s, transform .1s;}
@@ -209,6 +227,46 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
     </div>
   </div>
 
+  <div class="overview-panel">
+    <div class="overview-chart-wrap">
+      <canvas id="status-chart" width="180" height="180"></canvas>
+      <div class="overview-chart-center">
+        <div class="overview-chart-pct" id="overview-pct">0%</div>
+        <div class="overview-chart-label">fechado</div>
+      </div>
+    </div>
+    <div class="overview-stats">
+      <div class="overview-stat">
+        <span class="overview-stat-dot" style="background:var(--green)"></span>
+        <div>
+          <div class="overview-stat-value" id="stat-fechados">0</div>
+          <div class="overview-stat-label">fechados (pagos)</div>
+        </div>
+      </div>
+      <div class="overview-stat">
+        <span class="overview-stat-dot" style="background:var(--amber)"></span>
+        <div>
+          <div class="overview-stat-value" id="stat-parcial">0</div>
+          <div class="overview-stat-label">em andamento (parcial)</div>
+        </div>
+      </div>
+      <div class="overview-stat">
+        <span class="overview-stat-dot" style="background:#3a4260"></span>
+        <div>
+          <div class="overview-stat-value" id="stat-faltam">0</div>
+          <div class="overview-stat-label">faltam fechar</div>
+        </div>
+      </div>
+      <div class="overview-stat overview-stat-highlight">
+        <span class="overview-stat-dot" style="background:var(--orange)"></span>
+        <div>
+          <div class="overview-stat-value" id="stat-falta-pagar">R$ 0,00</div>
+          <div class="overview-stat-label">falta pagar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="kpi-row">
     <div class="kpi-card active" data-filter="all">
       <div class="kpi-card-head">
@@ -350,6 +408,62 @@ function isCommitted(l){
   return l.status === 'pago';
 }
 
+let statusChart = null;
+function renderOverviewChart(){
+  let fechados = 0, parcial = 0, faltam = 0;
+  let totalPlanejado = 0, totalPago = 0;
+  lotes.forEach(l => {
+    const committed = isCommitted(l);
+    const orc = toNumberBR(l.orcado);
+    const real = toNumberBR(l.real) || orc;
+    totalPlanejado += real;
+    if(committed){
+      fechados++;
+      totalPago += real;
+    } else if(l.tipo !== 'brinde' && l.status === 'parcial'){
+      parcial++;
+    } else {
+      faltam++;
+    }
+  });
+  const total = lotes.length;
+  const pct = total ? Math.round(fechados / total * 100) : 0;
+
+  const pctEl = document.getElementById('overview-pct');
+  if(pctEl) pctEl.textContent = pct + '%';
+  const fEl = document.getElementById('stat-fechados'); if(fEl) fEl.textContent = fechados;
+  const pEl = document.getElementById('stat-parcial'); if(pEl) pEl.textContent = parcial;
+  const rEl = document.getElementById('stat-faltam'); if(rEl) rEl.textContent = faltam;
+  const sEl = document.getElementById('stat-falta-pagar'); if(sEl) sEl.textContent = fmtMoney(Math.max(0, totalPlanejado - totalPago));
+
+  const canvas = document.getElementById('status-chart');
+  if(!canvas || typeof Chart === 'undefined') return;
+  const data = {
+    labels: ['Fechados', 'Em andamento', 'Faltam fechar'],
+    datasets: [{
+      data: [fechados, parcial, faltam],
+      backgroundColor: ['#3ECF8E', '#F5B942', '#2b3350'],
+      borderColor: '#121729',
+      borderWidth: 3,
+      hoverOffset: 4
+    }]
+  };
+  if(statusChart){
+    statusChart.data = data;
+    statusChart.update();
+  } else {
+    statusChart = new Chart(canvas, {
+      type: 'doughnut',
+      data,
+      options: {
+        cutout: '74%',
+        plugins: { legend: { display: false } },
+        animation: { duration: 350 }
+      }
+    });
+  }
+}
+
 function fmtMoney(n){
   return 'R$ ' + (n||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
@@ -388,6 +502,7 @@ function computeStats(){
   document.getElementById('st-progresso').textContent = providenciados + ' / ' + lotes.length;
   document.getElementById('st-progress-fill').style.width = (lotes.length ? (providenciados / lotes.length * 100) : 0) + '%';
   renderAlert();
+  renderOverviewChart();
 }
 
 function renderAlert(){
