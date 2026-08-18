@@ -29,7 +29,14 @@
 }
 *{box-sizing:border-box;}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
-.wrap{max-width:1080px;margin:0 auto;padding:0 24px 70px;}
+.wrap{max-width:1680px;margin:0 auto;padding:0 32px 70px;}
+.dashboard-grid{display:grid;grid-template-columns:336px minmax(0,1fr);gap:22px;align-items:start;}
+.sidebar-col{display:flex;flex-direction:column;gap:16px;position:sticky;top:20px;}
+.main-col{min-width:0;}
+@media (max-width:1100px){
+  .dashboard-grid{grid-template-columns:1fr;}
+  .sidebar-col{position:static;}
+}
 ::selection{background:var(--orange);color:#1a1206;}
 
 .navbar{display:flex;justify-content:space-between;align-items:center;background:var(--bg-elev);border-bottom:1px solid var(--border);padding:14px 28px;margin-bottom:28px;}
@@ -53,23 +60,25 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
 .cd-value span{font-size:13px;color:var(--text-soft);font-weight:500;}
 
 /* ---- painel de visao geral (pizza) ---- */
-.overview-panel{background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:18px;display:flex;align-items:center;gap:36px;flex-wrap:wrap;}
-.overview-chart-wrap{position:relative;width:180px;height:180px;flex-shrink:0;}
+.overview-panel{background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:26px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;}
+.overview-chart-wrap{position:relative;width:172px;height:172px;flex-shrink:0;}
 .overview-chart-center{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
 .overview-chart-pct{font-family:'Fraunces',serif;font-weight:700;font-size:30px;color:#fff;line-height:1;}
 .overview-chart-label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-top:4px;}
-.overview-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;flex:1;min-width:260px;}
+.overview-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;width:100%;}
 .overview-stat{display:flex;align-items:center;gap:10px;}
 .overview-stat-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
-.overview-stat-value{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:600;color:#fff;line-height:1.15;font-variant-numeric:tabular-nums;}
-.overview-stat-label{font-size:11.5px;color:var(--text-soft);}
+.overview-stat-value{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;color:#fff;line-height:1.15;font-variant-numeric:tabular-nums;}
+.overview-stat-label{font-size:11px;color:var(--text-soft);}
 .overview-stat-highlight .overview-stat-value{color:var(--orange);}
-@media (max-width:640px){
-  .overview-panel{flex-direction:column;align-items:flex-start;}
-  .overview-chart-wrap{align-self:center;}
+@media (max-width:480px){
+  .overview-stats{grid-template-columns:1fr;}
 }
 
-.kpi-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1.3fr;gap:10px;margin-bottom:16px;}
+.kpi-row{display:grid;grid-template-columns:1fr;gap:10px;}
+@media (max-width:1100px) and (min-width:641px){
+  .kpi-row{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+}
 .kpi-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;padding:15px 16px;cursor:pointer;transition:border-color .15s, transform .1s;}
 .kpi-card:hover{border-color:var(--orange);}
 .kpi-card:active{transform:scale(0.98);}
@@ -186,14 +195,10 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
 .footer-note{text-align:center;font-size:12px;color:var(--text-mute);margin-top:36px;}
 
 @media (max-width:900px){
-  .kpi-row{grid-template-columns:repeat(2,1fr);}
   .countdowns{flex-direction:column;}
   .lote{grid-template-columns:1fr;}
   .lote-num, .lote-drag-handle{display:none;}
   .brinde-extra{margin-left:0;}
-}
-@media (max-width:560px){
-  .kpi-row{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -227,6 +232,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
     </div>
   </div>
 
+  <div class="dashboard-grid">
+  <div class="sidebar-col">
   <div class="overview-panel">
     <div class="overview-chart-wrap">
       <canvas id="status-chart" width="180" height="180"></canvas>
@@ -304,7 +311,9 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
       <div class="progress-bar"><div class="progress-fill" id="st-progress-fill" style="width:0%"></div></div>
     </div>
   </div>
+  </div>
 
+  <div class="main-col">
   <div class="alert-bar" id="alert-bar" style="display:none;">
     <span id="alert-text"></span>
     <a href="#categories-container" id="alert-link">Revisar →</a>
@@ -335,6 +344,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
   <div class="cat-overview" id="cat-overview"></div>
 
   <div id="categories-container"></div>
+  </div>
+  </div>
 
   <div class="footer-note">Arraste pelo ⠿ para reordenar itens ou categorias inteiras (ou use ▲ ▼). Toque no carimbo de status para avançar: Orçando → Parcial → Pago. Tudo salva automaticamente e sincroniza entre quem tem o link.</div>
 
