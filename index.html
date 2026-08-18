@@ -83,6 +83,18 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
 .save-indicator{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-soft);white-space:nowrap;}
 .btn-add-lote{background:none;border:1px solid var(--orange);color:var(--orange);padding:8px 16px;border-radius:7px;font-size:12px;font-family:'IBM Plex Mono',monospace;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
 .btn-add-lote:hover{background:var(--orange-dim);}
+.collapse-toggle-btn{background:none;border:1px solid var(--border);color:var(--text-soft);padding:8px 14px;border-radius:7px;font-size:12px;font-family:'IBM Plex Mono',monospace;cursor:pointer;white-space:nowrap;}
+.collapse-toggle-btn:hover{border-color:var(--orange);color:var(--orange);}
+
+/* ---- visão geral por categoria ---- */
+.cat-overview{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.cat-overview-pill{display:flex;align-items:center;gap:8px;background:var(--bg-elev);border:1px solid var(--border);border-radius:20px;padding:7px 12px 7px 10px;cursor:pointer;font-size:12px;transition:border-color .15s, transform .1s;}
+.cat-overview-pill:hover{border-color:var(--catcolor,var(--orange));transform:translateY(-1px);}
+.cat-overview-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--catcolor,var(--orange));}
+.cat-overview-name{color:var(--text);font-weight:500;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
+.cat-overview-count{font-family:'IBM Plex Mono',monospace;color:var(--text-soft);font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.cat-overview-bar{width:34px;height:4px;border-radius:2px;background:var(--border);overflow:hidden;flex-shrink:0;}
+.cat-overview-bar-fill{height:100%;background:var(--catcolor,var(--orange));}
 
 /* ---- categoria ---- */
 .cat-card{
@@ -254,11 +266,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
   <div class="lotes-head">
     <div class="section-title">Itens do evento, por categoria</div>
     <div class="lotes-head-right">
+      <button class="collapse-toggle-btn" id="expand-all-btn">Expandir tudo</button>
+      <button class="collapse-toggle-btn" id="collapse-all-btn">Recolher tudo</button>
       <button class="btn-add-lote" id="add-lote-btn">+ Novo item</button>
       <button class="btn-add-lote" id="add-brinde-btn" style="border-color:var(--green);color:var(--green);">+ Novo brinde</button>
       <div class="save-indicator" id="save-indicator">carregando…</div>
     </div>
   </div>
+
+  <div class="cat-overview" id="cat-overview"></div>
 
   <div id="categories-container"></div>
 
@@ -421,16 +437,46 @@ function getGroups(){
   return groups;
 }
 
+// Painel compacto no topo: uma pastilha por categoria, pra ver tudo de uma vez.
+function renderOverview(groups){
+  const el = document.getElementById('cat-overview');
+  if(!el) return;
+  if(!groups.length){ el.innerHTML = ''; return; }
+  el.innerHTML = groups.map(g => {
+    const readyCount = g.entries.filter(e => isCommitted(e.lote)).length;
+    const pct = g.entries.length ? (readyCount / g.entries.length * 100) : 0;
+    return `<div class="cat-overview-pill" style="--catcolor:${g.color}" data-jump="${escapeAttr(g.cat)}">
+      <span class="cat-overview-dot"></span>
+      <span class="cat-overview-name">${g.cat}</span>
+      <span class="cat-overview-count">${readyCount}/${g.entries.length}</span>
+      <span class="cat-overview-bar"><span class="cat-overview-bar-fill" style="width:${pct}%"></span></span>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.cat-overview-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const cat = pill.dataset.jump;
+      collapsedCats.delete(cat);
+      renderLotes();
+      setTimeout(() => {
+        const card = document.querySelector(`.cat-card[data-cat-name="${CSS.escape(cat)}"]`);
+        if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 30);
+    });
+  });
+}
+
 function renderLotes(){
   const container = document.getElementById('categories-container');
   container.innerHTML = '';
 
   if(lotes.length === 0){
     container.innerHTML = '<div class="empty-state">Nenhum item ainda. Clique em "+ Novo item" pra começar.</div>';
+    document.getElementById('cat-overview').innerHTML = '';
     return;
   }
 
   const groups = getGroups();
+  renderOverview(groups);
   const filtering = isFiltering();
   let anyRendered = false;
 
@@ -444,7 +490,7 @@ function renderLotes(){
     const totalComprometido = g.entries.reduce((s,e)=> s + (isCommitted(e.lote) ? (toNumberBR(e.lote.real)||toNumberBR(e.lote.orcado)) : 0), 0);
     const readyCount = g.entries.filter(e=>isCommitted(e.lote)).length;
     const varPct = totalOrc ? ((totalOrc - totalComprometido) / totalOrc * 100) : 0;
-    const collapsed = collapsedCats.has(g.cat);
+    const collapsed = !filtering && collapsedCats.has(g.cat);
 
     const card = document.createElement('div');
     card.className = 'cat-card' + (collapsed ? ' collapsed' : '');
@@ -863,6 +909,15 @@ document.getElementById('add-brinde-btn').addEventListener('click', () => {
   scheduleSave();
   const container2 = document.getElementById('categories-container');
   container2.lastElementChild && container2.lastElementChild.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+document.getElementById('collapse-all-btn').addEventListener('click', () => {
+  getGroups().forEach(g => collapsedCats.add(g.cat));
+  renderLotes();
+});
+document.getElementById('expand-all-btn').addEventListener('click', () => {
+  collapsedCats.clear();
+  renderLotes();
 });
 
 async function loadMe(){
